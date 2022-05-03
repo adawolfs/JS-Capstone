@@ -3,6 +3,10 @@ canvas {
   margin: auto;
 }
 
+body {
+  margin:0;
+}
+
 .body {
   background: black;
   color: #ffbe00;
@@ -10,6 +14,7 @@ canvas {
   font-size: 5vw;
   line-height: 1.3;
   overflow: hidden;
+
 }
 
 div {

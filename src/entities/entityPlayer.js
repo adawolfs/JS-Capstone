@@ -9,6 +9,7 @@ class Player extends Entity {
     this.setData('speed', 200);
     this.play('sprPlayer');
     this.setData('isShooting', false);
+    this.setData('shootingButton', false);
     this.setData('timerShootDelay', 10);
     this.setData('timerShootTick', this.getData('timerShootDelay') - 1);
     this.setData('health', 5);

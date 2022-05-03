@@ -58,6 +58,18 @@ class SceneMain extends Phaser.Scene {
     this.load.image('hp3Of5', 'content/saberThree.png');
     this.load.image('hp4Of5', 'content/saberFour.png');
     this.load.image('hp5Of5', 'content/saberComplete.png');
+    this.load.scenePlugin({
+      key: 'rexuiplugin',
+      url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
+      sceneKey: 'rexUI',
+    });
+
+    this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
+    this.load.scenePlugin({
+      key: 'rexgesturesplugin',
+      url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexgesturesplugin.min.js',
+      sceneKey: 'rexGestures',
+    });
   }
 
   create() {
@@ -213,7 +225,20 @@ class SceneMain extends Phaser.Scene {
     this.time.addEvent({
       delay: 1000,
       callback() {
+        const addEnemy = (enemy) => {
+          if (enemy !== null) {
+            enemy.setScale(Phaser.Math.Between(10, 20) * 0.1);
+            this.enemies.add(enemy);
+          }
+        };
+
         let enemy = null;
+        let bombRate = 3;
+        let maxBombInstances = 20;
+        if (window.checkMobile) {
+          bombRate = 5;
+          maxBombInstances = 5;
+        }
 
         if (Phaser.Math.Between(0, 10) >= 3) {
           enemy = new TieFighter(
@@ -221,25 +246,25 @@ class SceneMain extends Phaser.Scene {
             Phaser.Math.Between(0, this.game.config.width),
             0,
           );
-        } else if (Phaser.Math.Between(0, 10) >= 5) {
-          if (this.getEnemiesByType('Bomb').length < 5) {
+          addEnemy(enemy);
+        }
+        if (Phaser.Math.Between(0, 10) >= 0) {
+          if (this.getEnemiesByType('Bomb').length < maxBombInstances) {
             enemy = new Bomb(
               this,
               Phaser.Math.Between(0, this.game.config.width),
               0,
             );
           }
-        } else {
+          addEnemy(enemy);
+        }
+        if (Phaser.Math.Between(0, 100) >= 90) {
           enemy = new ImperialShutle(
             this,
             Phaser.Math.Between(0, this.game.config.width),
             0,
           );
-        }
-
-        if (enemy !== null) {
-          enemy.setScale(Phaser.Math.Between(10, 20) * 0.1);
-          this.enemies.add(enemy);
+          addEnemy(enemy);
         }
       },
 
@@ -265,6 +290,25 @@ class SceneMain extends Phaser.Scene {
       callbackScope: this,
       loop: true,
     });
+
+    this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+      x: this.game.config.width * 0.1,
+      y: this.game.config.height * 0.9,
+      radius: 100,
+      base: this.add.circle(0, 0, 40).setStrokeStyle(2, 0x1a65ac),
+      thumb: this.add.circle(0, 0, 20).setStrokeStyle(2, 0x1a65ac),
+      // dir: '8dir',   // 'up&down'|0|'left&right'|1|'4dir'|2|'8dir'|3
+      // forceMin: 16,
+      // enable: true
+    });
+    const btn = this.add.circle(
+      this.game.config.width * 0.9,
+      this.game.config.height * 0.9, 40).setStrokeStyle(2, 0x1a65ac);
+    const _this = this
+    this.rexGestures.add.press(btn, {
+      time: 1,
+    }).on('pressstart', (press) => { _this.player.setData('shootingButton', true); })
+      .on('pressend', (press) => { _this.player.setData('shootingButton', false); });
   }
 
   update() {
@@ -283,7 +327,23 @@ class SceneMain extends Phaser.Scene {
         this.player.moveRight();
       }
 
-      if (this.keySpace.isDown) {
+      const cursorKeys = this.joyStick.createCursorKeys();
+      // eslint-disable-next-line no-restricted-syntax
+      for (const name in cursorKeys) {
+        if (cursorKeys[name].isDown) {
+          if (name === 'up') {
+            this.player.moveUp();
+          } else if (name === 'down') {
+            this.player.moveDown();
+          } else if (name === 'left') {
+            this.player.moveLeft();
+          } else if (name === 'right') {
+            this.player.moveRight();
+          }
+        }
+      }
+
+      if (this.keySpace.isDown || this.player.getData('shootingButton')) {
         this.player.setData('isShooting', true);
       } else {
         this.player.setData('timerShootTick', this.player.getData('timerShootDelay') - 1);

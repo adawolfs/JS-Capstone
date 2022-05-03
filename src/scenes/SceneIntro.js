@@ -7,7 +7,7 @@ class SceneIntro extends Phaser.Scene {
 
   preload() {
     this.load.image('gameT', 'content/gameTitle.png');
-    this.load.image('longTimeAgo', 'content/longTimeAgo.png');
+    this.load.image('longTimeAgo', 'content/haceMuchoTiempo.png');
   }
 
   create() {
