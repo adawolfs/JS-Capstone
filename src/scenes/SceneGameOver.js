@@ -21,16 +21,24 @@ class SceneGameOver extends Phaser.Scene {
       'gameOverTitle',
     );
 
+    if (window.mobileCheck()) {
+      this.gameOverTitle.setScale(window.innerWidth / this.gameOverTitle.width );
+    }
+
     this.gameOverImage = this.add.image(
       this.game.config.width * 0.5,
       this.game.config.height * 0.4,
       'vader',
     );
 
+    if (window.mobileCheck()) {
+      this.gameOverImage.setScale(window.innerWidth /this.gameOverImage.width );
+    }
+
     this.scores = getLocalScores();
     this.gameOverSceneScore = this.add.text(
-      this.game.config.width * 0.6,
-      this.game.config.height * 0.72,
+      this.game.config.width * 0.5,
+      this.game.config.height * 0.6,
       `Score: ${this.scores[0]}`, {
         color: '#d0c600',
         fontFamily: 'sans-serif',
@@ -102,23 +110,38 @@ class SceneGameOver extends Phaser.Scene {
 
     this.userName = '';
 
-    const div = document.createElement('div');
-    div.innerHTML = `
-      <input type="text" id="nameField" placeholder="Enter your name" style="font-size: 1.5rem width: ${this.game.config.width * 0.25}"><br>
+    this.scoreForm = document.createElement('div');
+    this.scoreForm.id = 'scoreForm';
+    this.scoreForm.innerHTML = `
+    <div id='scoreFormContainer' style="position: absolute;left: 1300px;top: 200px;">
+      <input type="text" id="name" placeholder="Enter your name" style="font-size: 1.5rem width: ${this.game.config.width * 0.25}"><br>
+      <input type="text" id="email" placeholder="Enter your email" style="font-size: 1.5rem width: ${this.game.config.width * 0.25}"><br>
+      <input type="text" id="phone" placeholder="Enter your phone" style="font-size: 1.5rem width: ${this.game.config.width * 0.25}"><br>
       <input type="button" name="submitButton" value="Submit Score" style="font-size: 1.5rem">
+    </div>
     `;
 
-    const element = this.add.dom(280, 480, div);
+    // const container = document.getElementById('phaser');
+    // container.appendChild(this.scoreForm);
+    // this.scoreForm = document.getElementById('scoreForm');
+    this.scoreForm.style = "background: red";
+
+
+    const element = this.add.dom(500, 480, this.scoreForm);
     element.addListener('click');
 
     element.on('click', (event) => {
       if (event.target.name === 'submitButton') {
-        const inputText = document.getElementById('nameField');
-        if (inputText.value !== '') {
-          element.removeListener('click');
-          element.setVisible(false);
-          this.userName = inputText.value;
-          this.submit = submitHighScore(this.userName, this.scores[0]);
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        if (emailInput.value !== '' && nameInput.value !== '' && phoneInput.value !== '') {
+          // element.removeListener('click');
+          // element.setVisible(false);
+          this.name = nameInput.value;
+          this.email = emailInput.value;
+          this.phone = phoneInput.value;
+          this.submit = submitHighScore(this.name, this.email, this.phone, this.scores[0]);
           this.submit.then(() => {
             this.scene.scene.song.stop();
             this.scene.start('SceneLeaderBoard');

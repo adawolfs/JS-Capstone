@@ -19,6 +19,10 @@ class SceneLeaderBoard extends Phaser.Scene {
   }
 
   create() {
+    let fontSizeApp = '1vw';
+    if (window.mobileCheck()) {
+      fontSizeApp = '5vw';
+    }
     this.gameTitle = this.add.image(
       this.game.config.width * 0.5,
       this.game.config.height * 0.1,
@@ -83,7 +87,7 @@ class SceneLeaderBoard extends Phaser.Scene {
       };
 
       const scrollMode = 0;
-      this.rexUI.add.gridTable({
+      const table = this.rexUI.add.gridTable({
         x: this.game.config.width * 0.46,
         y: 320,
         width: 400,
@@ -116,7 +120,7 @@ class SceneLeaderBoard extends Phaser.Scene {
               text: scene.add.text(0, 0, '', {
                 color: '#d0c600',
                 fontFamily: 'sans-serif',
-                fontSize: '2vw',
+                fontSize: fontSizeApp,
                 lineHeight: 1.3,
               }),
             });
@@ -127,8 +131,10 @@ class SceneLeaderBoard extends Phaser.Scene {
           return cellContainer;
         },
         items: this.getItems(20, scores),
-      })
-        .layout();
+      });
+      table.setSliderEnable = true;
+      table.scrollerEnable = true;
+      table.layout();
     });
 
     this.getItems = (count, score) => {

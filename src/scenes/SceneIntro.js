@@ -17,11 +17,14 @@ class SceneIntro extends Phaser.Scene {
       'longTimeAgo',
     );
 
+    const scaleRatio = window.innerWidth / this.title.width;
+    this.title.setScale(scaleRatio);
+
     this.tweens.add({
       targets: this.title,
       alpha: { from: 0, to: 1 },
       ease: 'Linear',
-      duration: 4000,
+      duration: 3000,
       repeat: 0,
       yoyo: true,
       onComplete: () => {

@@ -17,6 +17,14 @@ body {
 
 }
 
+#scoreFormContainer {
+  position: absolute;
+  left: -200px !important;
+  top: 0px !important;
+  width: 100px;
+  margin: 0;
+}
+
 div {
   left: 0;
   right: 0;

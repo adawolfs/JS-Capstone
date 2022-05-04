@@ -18,13 +18,15 @@ async function createGame() {
   return answer;
 }
 
-async function submitHighScore(userName, scoreValue) {
+async function submitHighScore(name, email, phone, score) {
   const submit = {
-    user: userName,
-    score: scoreValue,
+    name,
+    email,
+    phone,
+    score,
   };
   const post = JSON.stringify(submit);
-  const address = 'https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/N9E2TejbOkDiI58nb6Vu/scores/';
+  const address = 'https://guategeeks.api.rustedchip.com/starwars/scores';
   const settings = {
     method: 'POST',
     headers: {
@@ -41,13 +43,13 @@ async function submitHighScore(userName, scoreValue) {
 function sorting(obj) {
   const array = [];
   for (let i = 0; i < obj.length; i += 1) {
-    array.push([obj[i].score, obj[i].user]);
+    array.push([obj[i].score, obj[i].name]);
   }
   return Array.from(array).sort((a, b) => b[0] - a[0]);
 }
 
 async function getScoreBoard() {
-  const address = 'https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/N9E2TejbOkDiI58nb6Vu/scores/';
+  const address = 'https://guategeeks.api.rustedchip.com/starwars/scores';
   const settings = {
     method: 'GET',
     headers: {
@@ -57,8 +59,7 @@ async function getScoreBoard() {
   };
   const response = await fetch(address, settings);
   const answer = await response.json();
-
-  return sorting(answer.result);
+  return sorting(answer);
 }
 
 export { submitHighScore, getScoreBoard, createGame };

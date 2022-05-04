@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import ScenePreload from './scenes/ScenePreload';
 import SceneMainMenu from './scenes/SceneMainMenu';
 import SceneMain from './scenes/SceneMain';
 import SceneIntro from './scenes/SceneIntro';
@@ -28,6 +29,7 @@ const config = {
     },
   },
   scene: [
+    ScenePreload,
     SceneIntro,
     SceneMainMenu,
     SceneAbout,
